@@ -14,7 +14,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         password: config.get('DB_PASSWORD', ''),
         database: config.get('DB_DATABASE', 'blue_tile'),
         entities:    [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize: false,   // 운영에서는 반드시 false — 마이그레이션 사용
+        synchronize: true,    // 테이블 자동 생성 (초기 세팅용)
         timezone:    '+09:00',
         charset:     'utf8mb4',
         logging:     config.get('NODE_ENV') !== 'production',
