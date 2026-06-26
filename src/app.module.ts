@@ -1,0 +1,20 @@
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { DatabaseModule } from './database/database.module';
+import { CategoryModule } from './category/category.module';
+import { ProductModule } from './product/product.module';
+import { ShippingModule } from './shipping/shipping.module';
+import { BannerModule } from './banner/banner.module';
+
+@Module({
+  imports: [
+    // .env 전역 로드
+    ConfigModule.forRoot({ isGlobal: true }),
+    DatabaseModule,
+    CategoryModule,
+    ProductModule,
+    ShippingModule,
+    BannerModule,
+  ],
+})
+export class AppModule {}

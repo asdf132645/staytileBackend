@@ -1,0 +1,66 @@
+version: '3.9'
+
+services:
+
+  # ── MySQL ──────────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: blue-tile-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    # 포트는 외부에 열지 않음 (컨테이너 내부 통신만 사용)
+    expose:
+      - "3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${DB_USERNAME}", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ── NestJS API ─────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: blue-tile-api
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+    # 포트는 cloudflared가 같은 네트워크에서 직접 접근하므로 host 노출 불필요
+    expose:
+      - "3001"
+    # volumes:
+    #   - ./uploads:/app/uploads
+
+  # ── Cloudflare Tunnel ──────────────────────────────────────
+  # Cloudflare 대시보드 > Zero Trust > Tunnels > 터널 선택 > Configure
+  # > "Run the following command" 에서 토큰 복사 → .env의 CF_TUNNEL_TOKEN에 붙여넣기
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: blue-tile-tunnel
+    restart: always
+    depends_on:
+      - api
+    command: tunnel --no-autoupdate run --token ${CF_TUNNEL_TOKEN}
+    # cloudflared → api 컨테이너 직접 통신 (같은 Docker 네트워크)
+
+volumes:
+  db_data:
+    driver: local
