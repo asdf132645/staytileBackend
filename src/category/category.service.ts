@@ -73,6 +73,7 @@ export class CategoryService {
           name:         s.name,
           templateType: s.templateType,
           aspectRatio:  s.aspectRatio,
+          thumbnailUrl: s.thumbnailUrl,
         })),
     }));
   }

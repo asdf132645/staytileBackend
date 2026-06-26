@@ -46,6 +46,10 @@ export class SubCategory {
   @Column({ name: 'aspect_ratio', type: 'enum', enum: AspectRatio, nullable: true, default: null })
   aspectRatio: AspectRatio | null;
 
+  /** 홈 카테고리 섹션에 표시할 대표 이미지 URL */
+  @Column({ name: 'thumbnail_url', type: 'varchar', length: 500, nullable: true, default: null })
+  thumbnailUrl: string | null;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
