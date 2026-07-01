@@ -32,4 +32,9 @@ export class CreateSubCategoryDto {
   @IsOptional()
   @IsBoolean()
   isVisible?: boolean = true;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  thumbnailUrl?: string | null = null;
 }
