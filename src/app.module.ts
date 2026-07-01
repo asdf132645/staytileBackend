@@ -6,10 +6,11 @@ import { ProductModule } from './product/product.module';
 import { ShippingModule } from './shipping/shipping.module';
 import { BannerModule } from './banner/banner.module';
 import { UploadModule } from './upload/upload.module';
+import { SiteConfigModule } from './site-config/site-config.module';
+import { NoticeModule } from './notice/notice.module';
 
 @Module({
   imports: [
-    // .env 전역 로드
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
     CategoryModule,
@@ -17,6 +18,8 @@ import { UploadModule } from './upload/upload.module';
     ShippingModule,
     BannerModule,
     UploadModule,
+    SiteConfigModule,
+    NoticeModule,
   ],
 })
 export class AppModule {}
