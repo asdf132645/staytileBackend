@@ -8,6 +8,8 @@ import { BannerModule } from './banner/banner.module';
 import { UploadModule } from './upload/upload.module';
 import { SiteConfigModule } from './site-config/site-config.module';
 import { NoticeModule } from './notice/notice.module';
+import { AuthModule } from './auth/auth.module';
+import { BusinessProfileModule } from './business-profile/business-profile.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { NoticeModule } from './notice/notice.module';
     UploadModule,
     SiteConfigModule,
     NoticeModule,
+    AuthModule,
+    BusinessProfileModule,
   ],
 })
 export class AppModule {}

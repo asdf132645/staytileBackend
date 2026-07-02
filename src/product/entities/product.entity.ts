@@ -25,6 +25,10 @@ export class Product {
   @Column({ length: 100, nullable: true })
   brand: string | null;
 
+  /** null = 전화문의, 값 있음 = 실제 가격 (원) */
+  @Column({ type: 'int', unsigned: true, nullable: true, default: null })
+  price: number | null;
+
   @Column({ length: 500, nullable: true })
   thumbnail: string | null;
 

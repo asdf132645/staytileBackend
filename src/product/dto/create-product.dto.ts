@@ -2,6 +2,7 @@ import {
   IsString, IsBoolean, IsInt, IsOptional,
   IsArray, Min, MaxLength, IsUrl,
 } from 'class-validator';
+
 import { Type } from 'class-transformer';
 
 export class CreateProductDto {
@@ -22,6 +23,13 @@ export class CreateProductDto {
   @IsString()
   @MaxLength(100)
   brand?: string | null;
+
+  /** null = 전화문의 */
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Type(() => Number)
+  price?: number | null;
 
   @IsOptional()
   @IsString()
