@@ -50,6 +50,8 @@ services:
       R2_PUBLIC_URL: ${R2_PUBLIC_URL}
       JWT_SECRET: ${JWT_SECRET}
       ADMIN_PROMOTE_SECRET: ${ADMIN_PROMOTE_SECRET}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     # 포트는 cloudflared가 같은 네트워크에서 직접 접근하므로 host 노출 불필요
     expose:
       - "3001"

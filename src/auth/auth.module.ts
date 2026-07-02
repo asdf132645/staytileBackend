@@ -6,6 +6,7 @@ import { User } from './entities/user.entity';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
+import { AdminSeedService } from './admin-seed.service';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { JwtStrategy } from './jwt.strategy';
       signOptions: { expiresIn: '30d' },
     }),
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, AdminSeedService],
   controllers: [AuthController],
   exports: [AuthService, JwtModule],
 })
