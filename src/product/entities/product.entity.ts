@@ -29,6 +29,10 @@ export class Product {
   @Column({ type: 'int', unsigned: true, nullable: true, default: null })
   price: number | null;
 
+  /** null = 샘플 판매 안함, 값 있음 = 샘플 가격 (원) */
+  @Column({ name: 'sample_price', type: 'int', unsigned: true, nullable: true, default: null })
+  samplePrice: number | null;
+
   @Column({ length: 500, nullable: true })
   thumbnail: string | null;
 

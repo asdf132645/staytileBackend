@@ -31,6 +31,13 @@ export class CreateProductDto {
   @Type(() => Number)
   price?: number | null;
 
+  /** null = 샘플 판매 안함 */
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Type(() => Number)
+  samplePrice?: number | null;
+
   @IsOptional()
   @IsString()
   thumbnail?: string | null;

@@ -22,11 +22,13 @@ export class ProductController {
     @Query('mainCategorySlug') mainCategorySlug?: string,
     @Query('subCategorySlug')  subCategorySlug?:  string,
     @Query('subCategoryId')    subCategoryId?:    string,
+    @Query('isVisible')        isVisible?:        string,
   ) {
     return this.productService.findAll({
       mainCategorySlug,
       subCategorySlug,
       subCategoryId: subCategoryId ? Number(subCategoryId) : undefined,
+      isVisible: isVisible === 'true' ? true : isVisible === 'false' ? false : undefined,
     });
   }
 

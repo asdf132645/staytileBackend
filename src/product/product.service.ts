@@ -9,6 +9,7 @@ export interface ProductFilterQuery {
   mainCategorySlug?: string;
   subCategorySlug?:  string;
   subCategoryId?:    number;
+  isVisible?:        boolean;
 }
 
 @Injectable()
@@ -34,6 +35,9 @@ export class ProductService {
     }
     if (filter.subCategoryId) {
       qb.andWhere('p.sub_category_id = :subCategoryId', { subCategoryId: filter.subCategoryId });
+    }
+    if (filter.isVisible !== undefined) {
+      qb.andWhere('p.is_visible = :isVisible', { isVisible: filter.isVisible });
     }
 
     const products = await qb.getMany();

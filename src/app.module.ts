@@ -10,6 +10,7 @@ import { SiteConfigModule } from './site-config/site-config.module';
 import { NoticeModule } from './notice/notice.module';
 import { AuthModule } from './auth/auth.module';
 import { BusinessProfileModule } from './business-profile/business-profile.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { BusinessProfileModule } from './business-profile/business-profile.modul
     NoticeModule,
     AuthModule,
     BusinessProfileModule,
+    OrderModule,
   ],
 })
 export class AppModule {}
