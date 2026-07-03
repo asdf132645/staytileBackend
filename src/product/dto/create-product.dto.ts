@@ -31,6 +31,12 @@ export class CreateProductDto {
   @Type(() => Number)
   price?: number | null;
 
+  /** price가 null일 때 표시할 커스텀 문구 */
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  priceNote?: string | null;
+
   /** null = 샘플 판매 안함 */
   @IsOptional()
   @IsInt()
