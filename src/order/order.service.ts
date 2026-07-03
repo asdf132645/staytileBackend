@@ -57,6 +57,18 @@ export class OrderService {
     });
   }
 
+  /** 주문번호 + 연락처로 공개 조회 (비회원도 사용 가능) */
+  async findByIdAndPhone(id: number, phone: string): Promise<Order> {
+    const order = await this.orderRepo.findOneBy({ id });
+    if (!order) throw new NotFoundException(`주문 #${id}를 찾을 수 없습니다.`);
+    // 연락처 하이픈 무시하고 비교
+    const normalize = (p: string) => p.replace(/-/g, '');
+    if (normalize(order.phone) !== normalize(phone)) {
+      throw new NotFoundException(`주문 정보가 일치하지 않습니다.`);
+    }
+    return order;
+  }
+
   async updateStatus(id: number, status: OrderStatus): Promise<Order> {
     const order = await this.findOne(id);
     order.status = status;

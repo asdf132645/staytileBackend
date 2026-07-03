@@ -25,6 +25,15 @@ export class OrderController {
     return this.orderService.findByUserId(req.user.sub);
   }
 
+  /** GET /api/orders/lookup?id=1&phone=010-xxxx-xxxx — 주문번호+연락처 공개 조회 */
+  @Get('lookup')
+  lookup(
+    @Query('id', ParseIntPipe) id: number,
+    @Query('phone') phone: string,
+  ) {
+    return this.orderService.findByIdAndPhone(id, phone);
+  }
+
   /** GET /api/orders?status=PENDING — 전체 주문 목록 (어드민) */
   @Get()
   findAll(@Query('status') status?: OrderStatus) {
