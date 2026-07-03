@@ -10,6 +10,7 @@ export interface ProductFilterQuery {
   subCategorySlug?:  string;
   subCategoryId?:    number;
   isVisible?:        boolean;
+  search?:           string;
 }
 
 @Injectable()
@@ -38,6 +39,9 @@ export class ProductService {
     }
     if (filter.isVisible !== undefined) {
       qb.andWhere('p.is_visible = :isVisible', { isVisible: filter.isVisible });
+    }
+    if (filter.search) {
+      qb.andWhere('p.name LIKE :search', { search: `%${filter.search}%` });
     }
 
     const products = await qb.getMany();

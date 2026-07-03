@@ -23,12 +23,14 @@ export class ProductController {
     @Query('subCategorySlug')  subCategorySlug?:  string,
     @Query('subCategoryId')    subCategoryId?:    string,
     @Query('isVisible')        isVisible?:        string,
+    @Query('search')           search?:           string,
   ) {
     return this.productService.findAll({
       mainCategorySlug,
       subCategorySlug,
       subCategoryId: subCategoryId ? Number(subCategoryId) : undefined,
       isVisible: isVisible === 'true' ? true : isVisible === 'false' ? false : undefined,
+      search: search || undefined,
     });
   }
 
