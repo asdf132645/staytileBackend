@@ -27,6 +27,21 @@ export class SiteConfig {
   @Column({ name: 'cs_email', length: 100, nullable: true, default: 'cs@architing.com' })
   csEmail: string | null;
 
+  @Column({ name: 'cs_hours', length: 100, nullable: true, default: '월요일 ~ 금요일 10:00 ~ 17:00' })
+  csHours: string | null;
+
+  @Column({ name: 'mail_order_number', length: 100, nullable: true, default: null })
+  mailOrderNumber: string | null;
+
+  @Column({ name: 'bank_name', length: 30, nullable: true, default: null })
+  bankName: string | null;
+
+  @Column({ name: 'bank_account', length: 50, nullable: true, default: null })
+  bankAccount: string | null;
+
+  @Column({ name: 'bank_holder', length: 50, nullable: true, default: null })
+  bankHolder: string | null;
+
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

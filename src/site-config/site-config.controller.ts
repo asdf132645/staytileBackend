@@ -23,6 +23,21 @@ export class UpdateSiteConfigDto {
 
   @IsOptional() @IsString() @MaxLength(100)
   csEmail?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(100)
+  csHours?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(100)
+  mailOrderNumber?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(30)
+  bankName?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(50)
+  bankAccount?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(50)
+  bankHolder?: string | null;
 }
 
 @Controller('api/site-config')

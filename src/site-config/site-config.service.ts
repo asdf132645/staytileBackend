@@ -16,12 +16,17 @@ export class SiteConfigService {
       config = this.repo.create({
         id: 1,
         kakaoOpenTalkUrl: null,
-        companyName:    'STAY TILE',
-        ceoName:        '강승연',
-        businessNumber: '175-22-02643',
-        address:        '호현로 85번길 5',
-        csPhone:        '010-4636-7911',
-        csEmail:        'cs@architing.com',
+        companyName:     'STAY TILE',
+        ceoName:         '강승연',
+        businessNumber:  '175-22-02643',
+        address:         '호현로 85번길 5',
+        csPhone:         '010-4636-7911',
+        csEmail:         'cs@architing.com',
+        csHours:         '월요일 ~ 금요일 10:00 ~ 17:00',
+        mailOrderNumber: null,
+        bankName:        null,
+        bankAccount:     null,
+        bankHolder:      null,
       });
       await this.repo.save(config);
     }
