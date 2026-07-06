@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, ParseIntPipe } from '@nestjs/common'
+import { Controller, Get, Post, Patch, Delete, Param, Body, ParseIntPipe, HttpCode, HttpStatus } from '@nestjs/common'
 import { BannerService } from './banner.service'
 import { CreateBannerDto } from './dto/create-banner.dto'
 import { UpdateBannerDto } from './dto/update-banner.dto'
@@ -27,5 +27,6 @@ export class BannerController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseIntPipe) id: number) { return this.service.remove(id) }
 }

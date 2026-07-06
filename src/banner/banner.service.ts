@@ -4,10 +4,14 @@ import { Repository } from 'typeorm'
 import { Banner } from './entities/banner.entity'
 import { CreateBannerDto } from './dto/create-banner.dto'
 import { UpdateBannerDto } from './dto/update-banner.dto'
+import { UploadService } from '../upload/upload.service'
 
 @Injectable()
 export class BannerService {
-  constructor(@InjectRepository(Banner) private repo: Repository<Banner>) {}
+  constructor(
+    @InjectRepository(Banner) private repo: Repository<Banner>,
+    private readonly uploadService: UploadService,
+  ) {}
 
   findAll(): Promise<Banner[]> {
     return this.repo.find({ order: { sortOrder: 'ASC', createdAt: 'DESC' } })
@@ -43,7 +47,11 @@ export class BannerService {
   }
 
   async remove(id: number): Promise<void> {
-    await this.findOne(id)
+    const banner = await this.findOne(id)
     await this.repo.delete(id)
+    // R2 이미지 삭제 (DB 삭제 후)
+    if (banner.imageUrl) {
+      await this.uploadService.deleteFile(banner.imageUrl)
+    }
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { PutObjectCommand } from '@aws-sdk/client-s3'
+import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { createR2Client } from './r2.client'
 import { extname } from 'path'
 import { randomUUID } from 'crypto'
@@ -38,5 +38,31 @@ export class UploadService {
     )
 
     return `${this.publicUrl}/${key}`
+  }
+
+  /**
+   * R2에서 파일 삭제
+   * @param url  R2 공개 URL (https://assets.staytile.com/products/xxx.jpg)
+   */
+  async deleteFile(url: string): Promise<void> {
+    if (!url) return
+    try {
+      // URL에서 key 추출: publicUrl 이후 경로
+      const key = url.replace(`${this.publicUrl}/`, '')
+      if (!key || key === url) return // 외부 URL이면 무시
+      await this.r2.send(
+        new DeleteObjectCommand({ Bucket: this.bucket, Key: key })
+      )
+    } catch (e) {
+      // 삭제 실패해도 서비스 흐름 중단 안 함 (로그만)
+      console.warn(`[R2] deleteFile failed: ${url}`, e)
+    }
+  }
+
+  /** 여러 URL 배치 삭제 */
+  async deleteFiles(urls: (string | null | undefined)[]): Promise<void> {
+    await Promise.allSettled(
+      urls.filter(Boolean).map(url => this.deleteFile(url!))
+    )
   }
 }

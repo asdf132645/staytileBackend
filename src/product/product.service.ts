@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { UploadService } from '../upload/upload.service';
 
 export interface ProductFilterQuery {
   mainCategorySlug?: string;
@@ -18,6 +19,7 @@ export class ProductService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepo: Repository<Product>,
+    private readonly uploadService: UploadService,
   ) {}
 
   async findAll(filter: ProductFilterQuery): Promise<Product[]> {
@@ -78,6 +80,9 @@ export class ProductService {
     const product = await this.productRepo.findOneBy({ id });
     if (!product) throw new NotFoundException(`상품 #${id}를 찾을 수 없습니다.`);
     await this.productRepo.remove(product);
+    // R2 이미지 삭제 (썸네일 + 추가 이미지 전부)
+    const imageUrls = [product.thumbnail, ...(product.images ?? [])].filter(Boolean)
+    await this.uploadService.deleteFiles(imageUrls)
   }
 
   /** 관계 객체에서 편의 필드를 추가하여 직렬화 */
