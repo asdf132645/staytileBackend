@@ -3,10 +3,26 @@ import { IsOptional, IsString, MaxLength } from 'class-validator';
 import { SiteConfigService } from './site-config.service';
 
 export class UpdateSiteConfigDto {
-  @IsOptional()
-  @IsString()
-  @MaxLength(500)
+  @IsOptional() @IsString() @MaxLength(500)
   kakaoOpenTalkUrl?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(100)
+  companyName?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(50)
+  ceoName?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(30)
+  businessNumber?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(200)
+  address?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(30)
+  csPhone?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(100)
+  csEmail?: string | null;
 }
 
 @Controller('api/site-config')
@@ -14,17 +30,11 @@ export class SiteConfigController {
   constructor(private readonly service: SiteConfigService) {}
 
   @Get()
-  get() {
-    return this.service.get();
-  }
+  get() { return this.service.get(); }
 
   @Get('public')
-  getPublic() {
-    return this.service.get();
-  }
+  getPublic() { return this.service.get(); }
 
   @Patch()
-  update(@Body() dto: UpdateSiteConfigDto) {
-    return this.service.update(dto);
-  }
+  update(@Body() dto: UpdateSiteConfigDto) { return this.service.update(dto); }
 }
