@@ -86,6 +86,7 @@ export class ProductService {
       ...p,
       subCategoryName:  p.subCategory?.name,
       mainCategorySlug: p.subCategory?.mainCategory?.slug,
+      templateType:     p.subCategory?.templateType ?? 'PRODUCT_GRID',
     };
   }
 
