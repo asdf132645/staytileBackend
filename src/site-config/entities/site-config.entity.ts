@@ -42,6 +42,16 @@ export class SiteConfig {
   @Column({ name: 'bank_holder', length: 50, nullable: true, default: null })
   bankHolder: string | null;
 
+  // ── B2B 배너 ─────────────────────────────────────────────────
+  @Column({ name: 'b2b_enabled', type: 'boolean', default: true })
+  b2bEnabled: boolean;
+
+  @Column({ name: 'b2b_title', length: 100, nullable: true, default: '사업자 회원 특별 혜택' })
+  b2bTitle: string | null;
+
+  @Column({ name: 'b2b_description', length: 300, nullable: true, default: '사업자 인증 완료 고객에게는 특별 할인가와 전용 견적 서비스를 제공합니다. 지금 바로 사업자 인증을 신청하세요.' })
+  b2bDescription: string | null;
+
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

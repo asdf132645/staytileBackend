@@ -27,6 +27,9 @@ export class SiteConfigService {
         bankName:        null,
         bankAccount:     null,
         bankHolder:      null,
+        b2bEnabled:      true,
+        b2bTitle:        '사업자 회원 특별 혜택',
+        b2bDescription:  '사업자 인증 완료 고객에게는 특별 할인가와 전용 견적 서비스를 제공합니다. 지금 바로 사업자 인증을 신청하세요.',
       });
       await this.repo.save(config);
     }

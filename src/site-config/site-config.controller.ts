@@ -38,6 +38,15 @@ export class UpdateSiteConfigDto {
 
   @IsOptional() @IsString() @MaxLength(50)
   bankHolder?: string | null;
+
+  @IsOptional()
+  b2bEnabled?: boolean;
+
+  @IsOptional() @IsString() @MaxLength(100)
+  b2bTitle?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(300)
+  b2bDescription?: string | null;
 }
 
 @Controller('api/site-config')
