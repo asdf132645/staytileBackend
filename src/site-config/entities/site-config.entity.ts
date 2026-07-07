@@ -42,6 +42,28 @@ export class SiteConfig {
   @Column({ name: 'bank_holder', length: 50, nullable: true, default: null })
   bankHolder: string | null;
 
+  // ── 쇼룸 섹션 ────────────────────────────────────────────────
+  @Column({ name: 'showroom_enabled', type: 'boolean', default: true })
+  showroomEnabled: boolean;
+
+  @Column({ name: 'showroom_address', length: 200, nullable: true, default: null })
+  showroomAddress: string | null;
+
+  @Column({ name: 'showroom_map_url', length: 500, nullable: true, default: null })
+  showroomMapUrl: string | null;
+
+  @Column({ name: 'showroom_subway', length: 200, nullable: true, default: null })
+  showroomSubway: string | null;
+
+  @Column({ name: 'showroom_car', length: 200, nullable: true, default: null })
+  showroomCar: string | null;
+
+  @Column({ name: 'showroom_bus', length: 200, nullable: true, default: null })
+  showroomBus: string | null;
+
+  @Column({ name: 'showroom_hours', length: 100, nullable: true, default: null })
+  showroomHours: string | null;
+
   // ── B2B 배너 ─────────────────────────────────────────────────
   @Column({ name: 'b2b_enabled', type: 'boolean', default: true })
   b2bEnabled: boolean;

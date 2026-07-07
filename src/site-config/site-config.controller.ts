@@ -40,6 +40,27 @@ export class UpdateSiteConfigDto {
   bankHolder?: string | null;
 
   @IsOptional()
+  showroomEnabled?: boolean;
+
+  @IsOptional() @IsString() @MaxLength(200)
+  showroomAddress?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(500)
+  showroomMapUrl?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(200)
+  showroomSubway?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(200)
+  showroomCar?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(200)
+  showroomBus?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(100)
+  showroomHours?: string | null;
+
+  @IsOptional()
   b2bEnabled?: boolean;
 
   @IsOptional() @IsString() @MaxLength(100)

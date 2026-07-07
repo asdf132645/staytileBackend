@@ -74,4 +74,13 @@ export class OrderService {
     order.status = status;
     return this.orderRepo.save(order);
   }
+
+  async remove(id: number): Promise<void> {
+    const order = await this.findOne(id);
+    // SHIPPED 또는 CANCELLED만 삭제 허용
+    if (order.status !== 'SHIPPED' && order.status !== 'CANCELLED') {
+      throw new Error('발송완료 또는 취소된 주문만 삭제할 수 있습니다.');
+    }
+    await this.orderRepo.remove(order);
+  }
 }

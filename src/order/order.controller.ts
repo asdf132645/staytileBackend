@@ -1,7 +1,7 @@
 import {
-  Controller, Get, Post, Patch,
+  Controller, Get, Post, Patch, Delete,
   Param, Body, Query, Request,
-  ParseIntPipe, UseGuards,
+  ParseIntPipe, UseGuards, HttpCode, HttpStatus,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -53,5 +53,12 @@ export class OrderController {
     @Body('status') status: OrderStatus,
   ) {
     return this.orderService.updateStatus(id, status);
+  }
+
+  /** DELETE /api/orders/:id — 발송완료/취소 주문 삭제 (어드민) */
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.orderService.remove(id);
   }
 }
