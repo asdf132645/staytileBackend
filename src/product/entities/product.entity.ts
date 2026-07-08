@@ -19,6 +19,10 @@ export class Product {
   @Column({ length: 200 })
   name: string;
 
+  /** 관리자 내부용 기존 상품명 — 프론트에 노출 안 됨 */
+  @Column({ name: 'internal_name', length: 200, nullable: true, default: null })
+  internalName: string | null;
+
   @Column({ length: 200 })
   slug: string;
 

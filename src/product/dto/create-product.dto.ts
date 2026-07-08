@@ -14,6 +14,12 @@ export class CreateProductDto {
   @MaxLength(200)
   name: string;
 
+  /** 관리자 내부용 기존 상품명 */
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  internalName?: string | null;
+
   @IsOptional()
   @IsString()
   @MaxLength(200)
