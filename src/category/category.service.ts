@@ -18,6 +18,16 @@ export class CategoryService {
     private readonly subCategoryRepo: Repository<SubCategory>,
   ) {}
 
+  // ── 메뉴 트리 인메모리 캐시 (30초) ─────────────────────────
+  private _menuCache: any = null;
+  private _menuCacheAt = 0;
+  private readonly MENU_TTL = 30_000; // 30초
+
+  private invalidateMenuCache() {
+    this._menuCache = null;
+    this._menuCacheAt = 0;
+  }
+
   // ── 메인 카테고리 ────────────────────────────────────────────
 
   async findAll(): Promise<Category[]> {
@@ -40,29 +50,39 @@ export class CategoryService {
     const exists = await this.categoryRepo.findOneBy({ slug: dto.slug });
     if (exists) throw new ConflictException(`슬러그 '${dto.slug}'가 이미 사용 중입니다.`);
     const category = this.categoryRepo.create(dto);
-    return this.categoryRepo.save(category);
+    const saved = await this.categoryRepo.save(category);
+    this.invalidateMenuCache();
+    return saved;
   }
 
   async update(id: number, dto: UpdateCategoryDto): Promise<Category> {
     const category = await this.findOne(id);
     Object.assign(category, dto);
-    return this.categoryRepo.save(category);
+    const saved = await this.categoryRepo.save(category);
+    this.invalidateMenuCache();
+    return saved;
   }
 
   async remove(id: number): Promise<void> {
     const category = await this.findOne(id);
     await this.categoryRepo.remove(category);
+    this.invalidateMenuCache();
   }
 
-  /** GNB 메뉴 트리 — 프론트 전용 (노출 여부 필터 적용) */
+  /** GNB 메뉴 트리 — 프론트 전용 (노출 여부 필터 적용, 30초 캐시) */
   async getMenuTree() {
+    const now = Date.now();
+    if (this._menuCache && now - this._menuCacheAt < this.MENU_TTL) {
+      return this._menuCache;
+    }
+
     const categories = await this.categoryRepo.find({
       where: { isVisible: true },
       relations: ['subCategories'],
       order: { sortOrder: 'ASC' },
     });
 
-    return categories.map((cat) => ({
+    const result = categories.map((cat) => ({
       slug: cat.slug,
       name: cat.name,
       subCategories: cat.subCategories
@@ -76,6 +96,10 @@ export class CategoryService {
           thumbnailUrl: s.thumbnailUrl,
         })),
     }));
+
+    this._menuCache   = result;
+    this._menuCacheAt = now;
+    return result;
   }
 
   /** 특정 서브 카테고리 상세 (templateType 포함) — [main]/[sub].vue 진입 시 */
@@ -103,26 +127,31 @@ export class CategoryService {
   // ── 서브 카테고리 ────────────────────────────────────────────
 
   async createSub(dto: CreateSubCategoryDto): Promise<SubCategory> {
-    await this.findOne(dto.mainCategoryId); // 부모 존재 확인
+    await this.findOne(dto.mainCategoryId);
     const exists = await this.subCategoryRepo.findOneBy({
       mainCategoryId: dto.mainCategoryId,
       slug: dto.slug,
     });
     if (exists) throw new ConflictException(`슬러그 '${dto.slug}'가 이미 존재합니다.`);
     const sub = this.subCategoryRepo.create(dto);
-    return this.subCategoryRepo.save(sub);
+    const saved = await this.subCategoryRepo.save(sub);
+    this.invalidateMenuCache();
+    return saved;
   }
 
   async updateSub(id: number, dto: UpdateSubCategoryDto): Promise<SubCategory> {
     const sub = await this.subCategoryRepo.findOneBy({ id });
     if (!sub) throw new NotFoundException(`서브 카테고리 #${id}를 찾을 수 없습니다.`);
     Object.assign(sub, dto);
-    return this.subCategoryRepo.save(sub);
+    const saved = await this.subCategoryRepo.save(sub);
+    this.invalidateMenuCache();
+    return saved;
   }
 
   async removeSub(id: number): Promise<void> {
     const sub = await this.subCategoryRepo.findOneBy({ id });
     if (!sub) throw new NotFoundException(`서브 카테고리 #${id}를 찾을 수 없습니다.`);
     await this.subCategoryRepo.remove(sub);
+    this.invalidateMenuCache();
   }
 }
