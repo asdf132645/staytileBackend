@@ -6,13 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: [
-      'https://staytile.com',
-      'https://www.staytile.com',
-      'https://admin.staytile.com',
-      'http://localhost:3000',
-      'http://localhost:5173',
-    ],
+    origin: true,   // 모든 origin 허용 (카카오톡 인앱브라우저 등 대응)
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type,Authorization',
     credentials: true,
