@@ -64,6 +64,22 @@ export class SiteConfig {
   @Column({ name: 'showroom_hours', length: 100, nullable: true, default: null })
   showroomHours: string | null;
 
+  // ── SNS 링크 ─────────────────────────────────────────────────
+  @Column({ name: 'sns_instagram', length: 500, nullable: true, default: null })
+  snsInstagram: string | null;
+
+  @Column({ name: 'sns_naver_blog', length: 500, nullable: true, default: null })
+  snsNaverBlog: string | null;
+
+  @Column({ name: 'sns_threads', length: 500, nullable: true, default: null })
+  snsThreads: string | null;
+
+  @Column({ name: 'sns_youtube', length: 500, nullable: true, default: null })
+  snsYoutube: string | null;
+
+  @Column({ name: 'sns_naver_post', length: 500, nullable: true, default: null })
+  snsNaverPost: string | null;
+
   // ── B2B 배너 ─────────────────────────────────────────────────
   @Column({ name: 'b2b_enabled', type: 'boolean', default: true })
   b2bEnabled: boolean;
