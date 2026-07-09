@@ -7,10 +7,11 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { AdminSeedService } from './admin-seed.service';
+import { BusinessProfile } from '../business-profile/entities/business-profile.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, BusinessProfile]),
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET ?? 'staytile-secret-key',

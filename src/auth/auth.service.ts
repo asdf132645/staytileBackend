@@ -8,12 +8,15 @@ import * as bcrypt from 'bcryptjs';
 import { User, UserRole } from './entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { BusinessProfile } from '../business-profile/entities/business-profile.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
+    @InjectRepository(BusinessProfile)
+    private readonly bizRepo: Repository<BusinessProfile>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -56,11 +59,13 @@ export class AuthService {
   }
 
   async me(user: User) {
+    const biz = await this.bizRepo.findOne({ where: { userId: user.id } })
     return {
-      id:    user.id,
-      email: user.email,
-      name:  user.name,
-      role:  user.role,
+      id:             user.id,
+      email:          user.email,
+      name:           user.name,
+      role:           user.role,
+      businessStatus: biz?.status ?? null,   // 'PENDING' | 'APPROVED' | 'REJECTED' | null
     };
   }
 }

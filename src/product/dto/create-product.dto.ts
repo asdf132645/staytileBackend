@@ -77,6 +77,11 @@ export class CreateProductDto {
   @IsBoolean()
   isVisible?: boolean;
 
+  /** 상품 상세에 박스 계산기 표시 여부 */
+  @IsOptional()
+  @IsBoolean()
+  showCalculator?: boolean;
+
   @IsOptional()
   @IsInt()
   @Min(0)
