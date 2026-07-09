@@ -68,6 +68,21 @@ export class UpdateSiteConfigDto {
 
   @IsOptional() @IsString() @MaxLength(300)
   b2bDescription?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(500)
+  snsInstagram?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(500)
+  snsNaverBlog?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(500)
+  snsThreads?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(500)
+  snsYoutube?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(500)
+  snsNaverPost?: string | null;
 }
 
 @Controller('api/site-config')
