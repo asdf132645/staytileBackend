@@ -60,7 +60,7 @@ export class Product {
   isVisible: boolean;
 
   /** 상품 상세에 박스 계산기 표시 여부 */
-  @Column({ name: 'show_calculator', default: false })
+  @Column({ name: 'show_calculator', default: true })
   showCalculator: boolean;
 
   @Column({ name: 'sort_order', default: 0 })
