@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
+import { PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'
 import { createR2Client } from './r2.client'
-import { extname } from 'path'
 import { randomUUID } from 'crypto'
+import * as sharp from 'sharp'
 
 @Injectable()
 export class UploadService {
@@ -14,26 +14,26 @@ export class UploadService {
   constructor(private config: ConfigService) {
     this.r2 = createR2Client(config)
     this.bucket    = config.get<string>('R2_BUCKET_NAME')!
-    this.publicUrl = config.get<string>('R2_PUBLIC_URL')!  // https://assets.staytile.com 또는 pub-xxx.r2.dev
+    this.publicUrl = config.get<string>('R2_PUBLIC_URL')!
   }
 
   /**
-   * 파일을 R2에 업로드하고 공개 URL 반환
-   * @param file  multer Express.Multer.File
-   * @param folder  'products' | 'banners' | 'etc'
+   * 파일을 WebP로 변환 후 R2에 업로드하고 공개 URL 반환
    */
   async uploadFile(file: Express.Multer.File, folder = 'uploads'): Promise<string> {
-    const ext      = extname(file.originalname).toLowerCase()
-    const key      = `${folder}/${randomUUID()}${ext}`
-    const mimeType = file.mimetype
+    const key = `${folder}/${randomUUID()}.webp`
+
+    // 모든 이미지를 WebP로 변환 (quality 85 — 화질 유지하면서 용량 최소화)
+    const webpBuffer = await sharp(file.buffer)
+      .webp({ quality: 85 })
+      .toBuffer()
 
     await this.r2.send(
       new PutObjectCommand({
         Bucket:      this.bucket,
         Key:         key,
-        Body:        file.buffer,
-        ContentType: mimeType,
-        // R2 퍼블릭 버킷이면 ACL 불필요 — 버킷 자체를 Public으로 설정
+        Body:        webpBuffer,
+        ContentType: 'image/webp',
       })
     )
 
@@ -41,25 +41,68 @@ export class UploadService {
   }
 
   /**
+   * 기존 이미지 URL을 WebP로 변환하여 재업로드 (마이그레이션용)
+   * 성공 시 새 URL 반환, 실패 시 원본 URL 반환
+   */
+  async convertToWebp(url: string): Promise<string> {
+    if (!url || url.endsWith('.webp')) return url
+    try {
+      const key = url.replace(`${this.publicUrl}/`, '')
+      if (!key || key === url) return url // 외부 URL 무시
+
+      // R2에서 원본 다운로드
+      const getResult = await this.r2.send(
+        new GetObjectCommand({ Bucket: this.bucket, Key: key })
+      )
+      const chunks: Uint8Array[] = []
+      for await (const chunk of getResult.Body as AsyncIterable<Uint8Array>) {
+        chunks.push(chunk)
+      }
+      const originalBuffer = Buffer.concat(chunks)
+
+      // WebP로 변환
+      const webpBuffer = await sharp(originalBuffer)
+        .webp({ quality: 85 })
+        .toBuffer()
+
+      // 새 키로 업로드
+      const folder  = key.split('/')[0]
+      const newKey  = `${folder}/${randomUUID()}.webp`
+      await this.r2.send(
+        new PutObjectCommand({
+          Bucket:      this.bucket,
+          Key:         newKey,
+          Body:        webpBuffer,
+          ContentType: 'image/webp',
+        })
+      )
+
+      // 원본 삭제
+      await this.deleteFile(url)
+
+      return `${this.publicUrl}/${newKey}`
+    } catch (e) {
+      console.warn(`[R2] convertToWebp failed: ${url}`, e)
+      return url // 실패 시 원본 유지
+    }
+  }
+
+  /**
    * R2에서 파일 삭제
-   * @param url  R2 공개 URL (https://assets.staytile.com/products/xxx.jpg)
    */
   async deleteFile(url: string): Promise<void> {
     if (!url) return
     try {
-      // URL에서 key 추출: publicUrl 이후 경로
       const key = url.replace(`${this.publicUrl}/`, '')
-      if (!key || key === url) return // 외부 URL이면 무시
+      if (!key || key === url) return
       await this.r2.send(
         new DeleteObjectCommand({ Bucket: this.bucket, Key: key })
       )
     } catch (e) {
-      // 삭제 실패해도 서비스 흐름 중단 안 함 (로그만)
       console.warn(`[R2] deleteFile failed: ${url}`, e)
     }
   }
 
-  /** 여러 URL 배치 삭제 */
   async deleteFiles(urls: (string | null | undefined)[]): Promise<void> {
     await Promise.allSettled(
       urls.filter(Boolean).map(url => this.deleteFile(url!))

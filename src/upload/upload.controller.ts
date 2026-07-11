@@ -1,21 +1,29 @@
 import {
   Controller, Post, UploadedFile, UseInterceptors,
-  BadRequestException, Query,
+  BadRequestException, Query, Get,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
 import { UploadService } from './upload.service'
 import { memoryStorage } from 'multer'
+import { Product } from '../product/entities/product.entity'
+import { Banner } from '../banner/entities/banner.entity'
 
-const MAX_SIZE = 10 * 1024 * 1024 // 10MB
+const MAX_SIZE = 20 * 1024 * 1024 // 20MB
 
 @Controller('api/upload')
 export class UploadController {
-  constructor(private readonly service: UploadService) {}
+  constructor(
+    private readonly service: UploadService,
+    @InjectRepository(Product) private readonly productRepo: Repository<Product>,
+    @InjectRepository(Banner)  private readonly bannerRepo:  Repository<Banner>,
+  ) {}
 
   /**
    * POST /api/upload?folder=products
    * multipart/form-data  field: "file"
-   * → { url: "https://assets.staytile.com/products/uuid.jpg" }
+   * → 자동으로 WebP 변환 후 업로드
    */
   @Post()
   @UseInterceptors(
@@ -23,7 +31,7 @@ export class UploadController {
       storage: memoryStorage(),
       limits: { fileSize: MAX_SIZE },
       fileFilter: (_, file, cb) => {
-        const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+        const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif']
         if (!allowed.includes(file.mimetype)) {
           return cb(new BadRequestException('이미지 파일만 업로드 가능합니다 (jpg, png, webp, gif)'), false)
         }
@@ -38,5 +46,75 @@ export class UploadController {
     if (!file) throw new BadRequestException('파일이 없습니다.')
     const url = await this.service.uploadFile(file, folder)
     return { url }
+  }
+
+  /**
+   * GET /api/upload/migrate-webp
+   * 기존 PNG/JPG 이미지들을 WebP로 일괄 변환
+   * (상품 썸네일, 추가이미지, 배너 이미지 전부)
+   */
+  @Get('migrate-webp')
+  async migrateToWebp() {
+    const results = { converted: 0, skipped: 0, failed: 0, details: [] as string[] }
+
+    // ── 상품 이미지 변환 ─────────────────────────────────────
+    const products = await this.productRepo.find()
+    for (const p of products) {
+      let changed = false
+
+      // 썸네일
+      if (p.thumbnail && !p.thumbnail.endsWith('.webp')) {
+        const newUrl = await this.service.convertToWebp(p.thumbnail)
+        if (newUrl !== p.thumbnail) {
+          p.thumbnail = newUrl
+          changed = true
+          results.converted++
+          results.details.push(`product#${p.id} thumbnail → ${newUrl}`)
+        } else {
+          results.failed++
+        }
+      } else if (p.thumbnail) {
+        results.skipped++
+      }
+
+      // 추가 이미지
+      if (p.images?.length) {
+        const newImages: string[] = []
+        for (const img of p.images) {
+          if (!img.endsWith('.webp')) {
+            const newUrl = await this.service.convertToWebp(img)
+            newImages.push(newUrl)
+            if (newUrl !== img) { results.converted++; changed = true }
+            else results.failed++
+          } else {
+            newImages.push(img)
+            results.skipped++
+          }
+        }
+        p.images = newImages
+      }
+
+      if (changed) await this.productRepo.save(p)
+    }
+
+    // ── 배너 이미지 변환 ─────────────────────────────────────
+    const banners = await this.bannerRepo.find()
+    for (const b of banners) {
+      if (b.imageUrl && !b.imageUrl.endsWith('.webp')) {
+        const newUrl = await this.service.convertToWebp(b.imageUrl)
+        if (newUrl !== b.imageUrl) {
+          b.imageUrl = newUrl
+          await this.bannerRepo.save(b)
+          results.converted++
+          results.details.push(`banner#${b.id} → ${newUrl}`)
+        } else {
+          results.failed++
+        }
+      } else if (b.imageUrl) {
+        results.skipped++
+      }
+    }
+
+    return results
   }
 }
