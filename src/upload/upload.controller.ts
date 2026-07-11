@@ -9,6 +9,7 @@ import { UploadService } from './upload.service'
 import { memoryStorage } from 'multer'
 import { Product } from '../product/entities/product.entity'
 import { Banner } from '../banner/entities/banner.entity'
+import { SubCategory } from '../category/entities/sub-category.entity'
 
 const MAX_SIZE = 20 * 1024 * 1024 // 20MB
 
@@ -16,8 +17,9 @@ const MAX_SIZE = 20 * 1024 * 1024 // 20MB
 export class UploadController {
   constructor(
     private readonly service: UploadService,
-    @InjectRepository(Product) private readonly productRepo: Repository<Product>,
-    @InjectRepository(Banner)  private readonly bannerRepo:  Repository<Banner>,
+    @InjectRepository(Product)     private readonly productRepo: Repository<Product>,
+    @InjectRepository(Banner)      private readonly bannerRepo:  Repository<Banner>,
+    @InjectRepository(SubCategory) private readonly subCatRepo:  Repository<SubCategory>,
   ) {}
 
   /**
@@ -111,6 +113,24 @@ export class UploadController {
           results.failed++
         }
       } else if (b.imageUrl) {
+        results.skipped++
+      }
+    }
+
+    // ── 서브카테고리 썸네일 변환 ─────────────────────────────
+    const subCats = await this.subCatRepo.find()
+    for (const s of subCats) {
+      if (s.thumbnailUrl && !s.thumbnailUrl.endsWith('.webp')) {
+        const newUrl = await this.service.convertToWebp(s.thumbnailUrl)
+        if (newUrl !== s.thumbnailUrl) {
+          s.thumbnailUrl = newUrl
+          await this.subCatRepo.save(s)
+          results.converted++
+          results.details.push(`subcat#${s.id} → ${newUrl}`)
+        } else {
+          results.failed++
+        }
+      } else if (s.thumbnailUrl) {
         results.skipped++
       }
     }

@@ -23,9 +23,10 @@ export class UploadService {
   async uploadFile(file: Express.Multer.File, folder = 'uploads'): Promise<string> {
     const key = `${folder}/${randomUUID()}.webp`
 
-    // 모든 이미지를 WebP로 변환 (quality 85 — 화질 유지하면서 용량 최소화)
+    // 모든 이미지를 WebP로 변환 (최대 2000px, quality 80)
     const webpBuffer = await sharp(file.buffer)
-      .webp({ quality: 85 })
+      .resize({ width: 2000, withoutEnlargement: true })
+      .webp({ quality: 80 })
       .toBuffer()
 
     await this.r2.send(
@@ -60,9 +61,10 @@ export class UploadService {
       }
       const originalBuffer = Buffer.concat(chunks)
 
-      // WebP로 변환
+      // WebP로 변환 (최대 2000px, quality 80)
       const webpBuffer = await sharp(originalBuffer)
-        .webp({ quality: 85 })
+        .resize({ width: 2000, withoutEnlargement: true })
+        .webp({ quality: 80 })
         .toBuffer()
 
       // 새 키로 업로드
