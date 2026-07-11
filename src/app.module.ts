@@ -11,6 +11,7 @@ import { NoticeModule } from './notice/notice.module';
 import { AuthModule } from './auth/auth.module';
 import { BusinessProfileModule } from './business-profile/business-profile.module';
 import { OrderModule } from './order/order.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { OrderModule } from './order/order.module';
     AuthModule,
     BusinessProfileModule,
     OrderModule,
+    AnalyticsModule,
   ],
 })
 export class AppModule {}
