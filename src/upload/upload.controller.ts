@@ -96,6 +96,29 @@ export class UploadController {
         p.images = newImages
       }
 
+      // description HTML 안의 이미지 URL 변환
+      if (p.description) {
+        const imgRegex = /src="(https?:\/\/[^"]+\.(png|jpg|jpeg|gif))"/gi
+        let desc = p.description
+        let match: RegExpExecArray | null
+        const replacements: Array<{ old: string; new: string }> = []
+        while ((match = imgRegex.exec(p.description)) !== null) {
+          replacements.push({ old: match[1], new: '' })
+        }
+        for (const r of replacements) {
+          const newUrl = await this.service.convertToWebp(r.old)
+          if (newUrl !== r.old) {
+            desc = desc.split(r.old).join(newUrl)
+            results.converted++
+            changed = true
+            results.details.push(`product#${p.id} desc img → ${newUrl}`)
+          } else {
+            results.skipped++
+          }
+        }
+        if (desc !== p.description) p.description = desc
+      }
+
       if (changed) await this.productRepo.save(p)
     }
 
