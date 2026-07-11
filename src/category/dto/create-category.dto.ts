@@ -19,4 +19,8 @@ export class CreateCategoryDto {
   @IsOptional()
   @IsBoolean()
   isVisible?: boolean = true;
+
+  @IsOptional()
+  @IsBoolean()
+  showColorFilter?: boolean = false;
 }
