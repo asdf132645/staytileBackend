@@ -34,6 +34,18 @@ export class ProductController {
     });
   }
 
+  /** GET /api/products/sitemap-urls — @nuxtjs/sitemap 용 */
+  @Get('sitemap-urls')
+  async sitemapUrls() {
+    const products = await this.productService.findAll({ isVisible: true })
+    return products.map((p: any) => ({
+      loc:        `/product/${p.id}`,
+      lastmod:    p.updatedAt ?? p.createdAt,
+      changefreq: 'weekly',
+      priority:   0.8,
+    }))
+  }
+
   /** GET /api/products/:id */
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
