@@ -44,8 +44,16 @@ export class Product {
   @Column({ length: 500, nullable: true })
   thumbnail: string | null;
 
+  /** 대표 이미지 alt 텍스트 (SEO) */
+  @Column({ name: 'thumbnail_alt', length: 300, nullable: true, default: null })
+  thumbnailAlt: string | null;
+
   @Column({ type: 'json', nullable: true })
   images: string[] | null;
+
+  /** 추가 이미지 alt 텍스트 배열 (images 와 인덱스 1:1 대응, SEO) */
+  @Column({ name: 'image_alts', type: 'json', nullable: true, default: null })
+  imageAlts: string[] | null;
 
   @Column({ type: 'longtext', nullable: true })
   description: string | null;  // TipTap HTML
@@ -65,6 +73,10 @@ export class Product {
 
   @Column({ name: 'sort_order', default: 0 })
   sortOrder: number;
+
+  /** 상품 템플릿 타입 (서브카테고리에서 상속) */
+  @Column({ name: 'template_type', length: 30, nullable: true, default: null })
+  templateType: string | null;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

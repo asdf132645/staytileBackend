@@ -1,8 +1,7 @@
 import {
   IsString, IsBoolean, IsInt, IsOptional,
-  IsArray, Min, MaxLength, IsUrl,
+  IsArray, Min, MaxLength,
 } from 'class-validator';
-
 import { Type } from 'class-transformer';
 
 export class CreateProductDto {
@@ -14,7 +13,6 @@ export class CreateProductDto {
   @MaxLength(200)
   name: string;
 
-  /** 관리자 내부용 기존 상품명 */
   @IsOptional()
   @IsString()
   @MaxLength(200)
@@ -30,20 +28,17 @@ export class CreateProductDto {
   @MaxLength(100)
   brand?: string | null;
 
-  /** null = 전화문의 */
   @IsOptional()
   @IsInt()
   @Min(0)
   @Type(() => Number)
   price?: number | null;
 
-  /** price가 null일 때 표시할 커스텀 문구 */
   @IsOptional()
   @IsString()
   @MaxLength(100)
   priceNote?: string | null;
 
-  /** null = 샘플 판매 안함 */
   @IsOptional()
   @IsInt()
   @Min(0)
@@ -54,10 +49,22 @@ export class CreateProductDto {
   @IsString()
   thumbnail?: string | null;
 
+  /** 대표 이미지 alt 텍스트 (SEO) */
+  @IsOptional()
+  @IsString()
+  @MaxLength(300)
+  thumbnailAlt?: string | null;
+
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
   images?: string[];
+
+  /** 추가 이미지 alt 텍스트 배열 (images 와 인덱스 1:1 대응) */
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  imageAlts?: string[];
 
   @IsOptional()
   @IsString()
@@ -77,14 +84,17 @@ export class CreateProductDto {
   @IsBoolean()
   isVisible?: boolean;
 
-  /** 상품 상세에 박스 계산기 표시 여부 */
   @IsOptional()
   @IsBoolean()
   showCalculator?: boolean;
 
   @IsOptional()
   @IsInt()
-  @Min(0)
   @Type(() => Number)
   sortOrder?: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(30)
+  templateType?: string | null;
 }
