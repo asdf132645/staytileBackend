@@ -1,6 +1,6 @@
 import {
-  Controller, Post, Get, Patch, Body, Param, UseGuards, Request,
-  ForbiddenException, ParseIntPipe,
+  Controller, Post, Get, Patch, Delete, Body, Param, UseGuards, Request,
+  ForbiddenException, NotFoundException, ParseIntPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -52,9 +52,12 @@ export class AuthController {
         email:          u.email,
         name:           u.name,
         role:           u.role,
+        phone:          u.phone          ?? null,
+        address:        u.address        ?? null,
+        addressDetail:  u.addressDetail  ?? null,
         createdAt:      u.createdAt,
-        businessStatus: biz?.status ?? null,
-        companyName:    biz?.companyName ?? null,
+        businessStatus: biz?.status      ?? null,
+        companyName:    biz?.companyName  ?? null,
         businessNumber: biz?.businessNumber ?? null,
       };
     });
@@ -73,6 +76,21 @@ export class AuthController {
     if (!user) return { ok: false };
     user.role = body.role;
     await this.userRepo.save(user);
+    return { ok: true };
+  }
+
+  /** 어드민 전용 — 회원 삭제 */
+  @UseGuards(JwtAuthGuard)
+  @Delete('admin/users/:id')
+  async adminDeleteUser(
+    @Request() req: any,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    if (req.user.role !== UserRole.ADMIN) throw new ForbiddenException();
+    if (req.user.sub === id) throw new ForbiddenException('자기 자신은 삭제할 수 없습니다.');
+    const user = await this.userRepo.findOneBy({ id });
+    if (!user) throw new NotFoundException();
+    await this.userRepo.remove(user);
     return { ok: true };
   }
 

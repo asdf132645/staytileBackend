@@ -30,6 +30,9 @@ export class AuthService {
       passwordHash,
       name: dto.name,
       role: UserRole.USER,
+      phone:         dto.phone         ?? null,
+      address:       dto.address       ?? null,
+      addressDetail: dto.addressDetail ?? null,
     });
     await this.userRepo.save(user);
     return this.issueToken(user);
