@@ -11,10 +11,11 @@ export class AnalyticsService {
   ) {}
 
   async track(ip: string, path: string, userAgent: string | null, referer: string | null) {
-    // 같은 IP + 같은 path → 1시간 내 중복 무시
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    // 같은 IP → 오늘 하루 중복 무시 (path 무관)
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
     const recent = await this.repo.findOne({
-      where: { ip, path, createdAt: MoreThanOrEqual(oneHourAgo) },
+      where: { ip, createdAt: MoreThanOrEqual(todayStart) },
     });
     if (recent) return;
 
