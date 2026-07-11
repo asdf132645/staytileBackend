@@ -21,6 +21,9 @@ export class Category {
   @Column({ name: 'is_visible', default: true })
   isVisible: boolean;
 
+  @Column({ name: 'show_color_filter', default: false })
+  showColorFilter: boolean;
+
   @OneToMany(() => SubCategory, (sub) => sub.mainCategory, { eager: false })
   subCategories: SubCategory[];
 

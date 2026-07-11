@@ -115,12 +115,13 @@ export class CategoryService {
     if (!sub) throw new NotFoundException(`카테고리 '${mainSlug}/${subSlug}'를 찾을 수 없습니다.`);
 
     return {
-      slug:         sub.slug,
-      name:         sub.name,
-      templateType: sub.templateType,
-      aspectRatio:  sub.aspectRatio,
-      mainSlug:     sub.mainCategory.slug,
-      mainName:     sub.mainCategory.name,
+      slug:            sub.slug,
+      name:            sub.name,
+      templateType:    sub.templateType,
+      aspectRatio:     sub.aspectRatio,
+      mainSlug:        sub.mainCategory.slug,
+      mainName:        sub.mainCategory.name,
+      showColorFilter: sub.mainCategory.showColorFilter ?? false,
     };
   }
 
