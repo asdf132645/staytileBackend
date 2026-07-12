@@ -72,9 +72,18 @@ export class Product {
   @Column({ length: 200, nullable: true, default: null })
   spec: string | null;
 
-  /** 재질 (예: Porcelain (벽, 바닥 사용 가능)) */
+  /** 재질 표시 텍스트 (예: Porcelain (벽, 바닥 사용 가능)) */
   @Column({ length: 200, nullable: true, default: null })
   material: string | null;
+
+  /**
+   * 타일 재질 분류 — 접착제/줄눈 계산기 분기용
+   * 'porcelain' = 자기질/포세린 (흡수율 0.5% 이하, 폴리머계 접착제 필수)
+   * 'stoneware' = 석기질 (흡수율 3% 이하)
+   * 'ceramic'   = 도기질 (흡수율 높음, 일반 압착 시멘트 가능)
+   */
+  @Column({ name: 'tile_type', length: 20, nullable: true, default: null })
+  tileType: string | null;
 
   /** 판매단위 (예: Box (600×600mm × 3장=1.08㎡)) */
   @Column({ name: 'sales_unit', length: 300, nullable: true, default: null })

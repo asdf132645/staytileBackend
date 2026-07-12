@@ -128,6 +128,11 @@ export class CreateProductDto {
   certMarks?: Array<{ image: string; title: string; description: string }> | null;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(20)
+  tileType?: string | null;
+
+  @IsOptional()
   @IsBoolean()
   showConstructionGuide?: boolean;
 }
