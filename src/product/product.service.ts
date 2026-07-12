@@ -12,6 +12,7 @@ export interface ProductFilterQuery {
   subCategoryId?:    number;
   isVisible?:        boolean;
   search?:           string;
+  limit?:            number;
 }
 
 @Injectable()
@@ -44,6 +45,9 @@ export class ProductService {
     }
     if (filter.search) {
       qb.andWhere('p.name LIKE :search', { search: `%${filter.search}%` });
+    }
+    if (filter.limit) {
+      qb.limit(filter.limit);
     }
 
     const products = await qb.getMany();

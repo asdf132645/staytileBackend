@@ -24,6 +24,7 @@ export class ProductController {
     @Query('subCategoryId')    subCategoryId?:    string,
     @Query('isVisible')        isVisible?:        string,
     @Query('search')           search?:           string,
+    @Query('limit')            limit?:            string,
   ) {
     return this.productService.findAll({
       mainCategorySlug,
@@ -31,6 +32,7 @@ export class ProductController {
       subCategoryId: subCategoryId ? Number(subCategoryId) : undefined,
       isVisible: isVisible === 'true' ? true : isVisible === 'false' ? false : undefined,
       search: search || undefined,
+      limit: limit ? Number(limit) : undefined,
     });
   }
 
