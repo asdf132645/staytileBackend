@@ -64,6 +64,30 @@ export class Product {
   @Column({ name: 'color_name', length: 80, nullable: true })
   colorName: string | null;
 
+  /** 원산지 (예: Italy, Korea) */
+  @Column({ length: 100, nullable: true, default: null })
+  origin: string | null;
+
+  /** 규격 (예: 600×600mm (두께 9mm)) */
+  @Column({ length: 200, nullable: true, default: null })
+  spec: string | null;
+
+  /** 재질 (예: Porcelain (벽, 바닥 사용 가능)) */
+  @Column({ length: 200, nullable: true, default: null })
+  material: string | null;
+
+  /** 판매단위 (예: Box (600×600mm × 3장=1.08㎡)) */
+  @Column({ name: 'sales_unit', length: 300, nullable: true, default: null })
+  salesUnit: string | null;
+
+  /** 샘플 안내 문구 (기본값: "샘플은 실제 상품 크기와 동일한 크기로 발송됩니다.") */
+  @Column({ name: 'sample_note', length: 300, nullable: true, default: null })
+  sampleNote: string | null;
+
+  /** 인증마크 배열 [{ image: string, label: string }] */
+  @Column({ name: 'cert_marks', type: 'json', nullable: true, default: null })
+  certMarks: Array<{ image: string; label: string }> | null;
+
   @Column({ name: 'is_visible', default: true })
   isVisible: boolean;
 

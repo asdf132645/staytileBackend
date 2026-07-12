@@ -97,4 +97,33 @@ export class CreateProductDto {
   @IsString()
   @MaxLength(30)
   templateType?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  origin?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  spec?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  material?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(300)
+  salesUnit?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(300)
+  sampleNote?: string | null;
+
+  @IsOptional()
+  @IsArray()
+  certMarks?: Array<{ image: string; label: string }> | null;
 }
