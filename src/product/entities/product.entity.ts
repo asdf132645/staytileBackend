@@ -84,9 +84,13 @@ export class Product {
   @Column({ name: 'sample_note', length: 300, nullable: true, default: null })
   sampleNote: string | null;
 
-  /** 인증마크 배열 [{ image: string, label: string }] */
+  /** 인증마크 배열 [{ image, title, description }] */
   @Column({ name: 'cert_marks', type: 'json', nullable: true, default: null })
-  certMarks: Array<{ image: string; label: string }> | null;
+  certMarks: Array<{ image: string; title: string; description: string }> | null;
+
+  /** 상품 상세 하단 시공 안내 섹션 표시 여부 */
+  @Column({ name: 'show_construction_guide', default: false })
+  showConstructionGuide: boolean;
 
   @Column({ name: 'is_visible', default: true })
   isVisible: boolean;

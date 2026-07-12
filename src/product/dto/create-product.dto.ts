@@ -125,5 +125,9 @@ export class CreateProductDto {
 
   @IsOptional()
   @IsArray()
-  certMarks?: Array<{ image: string; label: string }> | null;
+  certMarks?: Array<{ image: string; title: string; description: string }> | null;
+
+  @IsOptional()
+  @IsBoolean()
+  showConstructionGuide?: boolean;
 }
