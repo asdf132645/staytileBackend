@@ -4,6 +4,7 @@ import {
 } from '@nestjs/common';
 import { BusinessProfileService } from './business-profile.service';
 import { ApplyBusinessDto } from './dto/apply-business.dto';
+import { UpdateMarketingDto } from './dto/update-marketing.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { BusinessStatus } from './entities/business-profile.entity';
 
@@ -23,6 +24,13 @@ export class BusinessProfileController {
   @Post('apply')
   apply(@Request() req: any, @Body() dto: ApplyBusinessDto) {
     return this.service.apply(req.user.id, dto);
+  }
+
+  /** 파트너: 마케팅 정보 저장 (승인된 사용자만) */
+  @UseGuards(JwtAuthGuard)
+  @Patch('me/marketing')
+  updateMarketing(@Request() req: any, @Body() dto: UpdateMarketingDto) {
+    return this.service.updateMarketing(req.user.id, dto);
   }
 
   /** 관리자: 전체 목록 */

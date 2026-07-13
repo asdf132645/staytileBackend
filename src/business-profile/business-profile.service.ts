@@ -1,10 +1,11 @@
 import {
-  Injectable, ConflictException, NotFoundException,
+  Injectable, ConflictException, NotFoundException, ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BusinessProfile, BusinessStatus } from './entities/business-profile.entity';
 import { ApplyBusinessDto } from './dto/apply-business.dto';
+import { UpdateMarketingDto } from './dto/update-marketing.dto';
 
 @Injectable()
 export class BusinessProfileService {
@@ -48,6 +49,17 @@ export class BusinessProfileService {
     if (!profile) throw new NotFoundException();
     profile.status       = BusinessStatus.APPROVED;
     profile.rejectReason = null;
+    return this.repo.save(profile);
+  }
+
+  /** 파트너: 마케팅 정보 업데이트 (승인된 경우만) */
+  async updateMarketing(userId: number, dto: UpdateMarketingDto) {
+    const profile = await this.repo.findOne({ where: { userId } });
+    if (!profile) throw new NotFoundException('사업자 신청 내역이 없습니다.');
+    if (profile.status !== BusinessStatus.APPROVED) {
+      throw new ForbiddenException('승인된 파트너만 마케팅 정보를 등록할 수 있습니다.');
+    }
+    Object.assign(profile, dto);
     return this.repo.save(profile);
   }
 
