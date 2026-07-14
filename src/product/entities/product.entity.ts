@@ -101,6 +101,10 @@ export class Product {
   @Column({ name: 'show_construction_guide', default: false })
   showConstructionGuide: boolean;
 
+  /** QR 코드 랜딩 페이지 전용 설명글 (일반 상세와 별도) */
+  @Column({ name: 'qr_description', type: 'text', nullable: true, default: null })
+  qrDescription: string | null;
+
   @Column({ name: 'is_visible', default: true })
   isVisible: boolean;
 

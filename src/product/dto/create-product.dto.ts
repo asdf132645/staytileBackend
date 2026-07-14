@@ -135,4 +135,9 @@ export class CreateProductDto {
   @IsOptional()
   @IsBoolean()
   showConstructionGuide?: boolean;
+
+  /** QR 랜딩 페이지 전용 설명글 */
+  @IsOptional()
+  @IsString()
+  qrDescription?: string | null;
 }
