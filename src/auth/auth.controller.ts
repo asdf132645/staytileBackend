@@ -59,6 +59,12 @@ export class AuthController {
         businessStatus: biz?.status      ?? null,
         companyName:    biz?.companyName  ?? null,
         businessNumber: biz?.businessNumber ?? null,
+        // 마케팅 파트너 정보
+        blogUrl:        biz?.blogUrl      ?? null,
+        snsUrl:         biz?.snsUrl       ?? null,
+        snsUsername:    biz?.snsUsername  ?? null,
+        snsPassword:    biz?.snsPassword  ?? null,
+        partnerNote:    biz?.partnerNote  ?? null,
       };
     });
   }

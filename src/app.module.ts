@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { BusinessProfileModule } from './business-profile/business-profile.module';
 import { OrderModule } from './order/order.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { ShowroomModule } from './showroom/showroom.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     BusinessProfileModule,
     OrderModule,
     AnalyticsModule,
+    ShowroomModule,
   ],
 })
 export class AppModule {}
